@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Government Schemes Chatbot</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        #chat-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            width: 90%;
+            max-width: 600px;
+            overflow: hidden;
+            animation: slide-in-bottom 0.5s ease;
+        }
+        #chat-interface {
+            padding: 20px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+        #input-form {
+            display: flex;
+            padding: 10px;
+            border-top: 1px solid #eee;
+        }
+        #user-input {
+            flex: 1;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 15px;
+            margin-right: 10px;
+            font-size: 16px;
+        }
+        #user-input:focus {
+            outline: none;
+        }
+        #send-button {
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            padding: 10px 20px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        #send-button:hover {
+            background-color: #45a049;
+        }
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 10px;
+            word-wrap: break-word;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            animation: slide-in-bottom 0.3s ease;
+        }
+        .user-message {
+            background-color: #4caf50;
+            color: #fff;
+            align-self: flex-end;
+        }
+        .bot-message {
+            background-color: #2196f3;
+            color: #fff;
+            align-self: flex-start;
+        }
+        .quick-reply {
+            background-color: #e0e0e0;
+            color: #333;
+            border: none;
+            border-radius: 15px;
+            padding: 5px 10px;
+            margin: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .quick-reply:hover {
+            background-color: #d0d0d0;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            padding: 10px;
+        }
+        @keyframes slide-in-bottom {
+            from {
+                transform: translateY(100%);
+            }
+            to {
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container" class="container mt-5">
+        <div id="chat-interface" class="mb-2">
+            <div class="message bot-message">Welcome! Ask me about Indian government schemes. You can type your query or use the quick reply buttons below.</div>
+        </div>
+        <div id="quick-replies" class="d-flex flex-wrap mb-2">
+            <button class="quick-reply btn btn-outline-secondary m-1" onclick="handleQuickReply('Jan Dhan Yojana')">Jan Dhan Yojana</button>
+            <button class="quick-reply btn btn-outline-secondary m-1" onclick="handleQuickReply('Awas Yojana')">Awas Yojana</button>
+            <button class="quick-reply btn btn-outline-secondary m-1" onclick="handleQuickReply('Mudra Yojana')">Mudra Yojana</button>
+            <button class="quick-reply btn btn-outline-secondary m-1" onclick="handleQuickReply('Jeevan Jyoti Bima Yojana')">Jeevan Jyoti Bima Yojana</button>
+            <button class="quick-reply btn btn-outline-secondary m-1" onclick="handleQuickReply('Atal Pension Yojana')">Atal Pension Yojana</button>
+        </div>
+        <div id="loading" class="text-center mb-2">Processing your request...</div>
+        <form id="input-form" class="input-group">
+            <input type="text" id="user-input" class="form-control" placeholder="Type your message here..." required>
+            <div class="input-group-append">
+                <button type="submit" id="send-button" class="btn btn-success">Send</button>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+        document.getElementById('input-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const userInput = document.getElementById('user-input').value.trim();
+            if (userInput) {
+                addMessage(userInput, 'user-message');
+                processUserInput(userInput);
+                document.getElementById('user-input').value = '';
+            }
+        });
+
+        function handleQuickReply(schemeName) {
+            addMessage(schemeName, 'user-message');
+            processUserInput(schemeName);
+        }
+
+        function addMessage(text, className) {
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${className}`;
+            messageDiv.innerText = text;
+            document.getElementById('chat-interface').appendChild(messageDiv);
+            document.getElementById('chat-interface').scrollTop = document.getElementById('chat-interface').scrollHeight;
+        }
+
+        function processUserInput(input) {
+            document.getElementById('loading').style.display = 'block';
+
+            const schemeKeywords = {
+                'jan dhan yojana': 1,
+                'awas yojana': 2,
+                'mudra yojana': 3,
+                'jeevan jyoti bima yojana': 4,
+                'atal pension yojana': 5,
+                'kaushal vikas yojana': 6,
+                'fasal bima yojana': 7,
+                'suraksha bima yojana': 8,
+                'krishi sinchai yojana': 9,
+                'gramin awaas yojana': 10,
+                'gram sadak yojana': 11,
+                'matru vandana yojana': 12,
+                'sukanya samriddhi yojana': 13,
+                'mgnrega': 14,
+                'ayushman bharat': 15
+            };
+
+            let schemeId = null;
+            for (const keyword in schemeKeywords) {
+                if (input.toLowerCase().includes(keyword)) {
+                    schemeId = schemeKeywords[keyword];
+                    break;
+                }
+            }
+
+            if (schemeId) {
+                fetch(`http://localhost:5000/scheme/${schemeId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        document.getElementById('loading').style.display = 'none';
+                        if (data.error) {
+                            addMessage(data.error, 'bot-message');
+                        } else {
+                            addMessage(`Scheme: ${data.name}\nDescription: ${data.description}\nEligibility: ${data.eligibility}\nBenefits: ${data.benefits}\nMore info: ${data.link}`, 'bot-message');
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('loading').style.display = 'none';
+                        console.error('Error:', error);
+                        addMessage('Sorry, there was an error processing your request.', 'bot-message');
+                    });
+            } else {
+                document.getElementById('loading').style.display = 'none';
+                addMessage('I didn\'t understand that. Please ask about a specific scheme like "Jan Dhan Yojana", "Awas Yojana", "Mudra Yojana", "Jeevan Jyoti Bima Yojana", or "Atal Pension Yojana".', 'bot-message');
+            }
+        }
+    </script>
+</body>
+</html>
+
+
+
